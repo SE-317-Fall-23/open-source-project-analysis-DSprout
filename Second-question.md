@@ -1,45 +1,33 @@
-## Project Selected: <Enter project name>
+## Project Selected:
+4.  GoHTTPRouter (Go)
+    -   GitHub Repository: [GoHTTPRouter on GitHub](https://github.com/julienschmidt/httprouter)
+    -   Description: GoHTTPRouter is a high-performance HTTP request router for the Go programming language. Its concise codebase makes it a great choice for studying testing in the Go environment.
 
 ## I. Introduction
-- Provide an overview of the analysis, indicating the goal of describing the types of testing used in the selected open-source project and explaining the rationale behind their choice.
+The Testing used in GoHTTPRouter appears to be unit and integration testing for function behavior. Specifically focusing on general important cases such as nil cases or intended interactions between routers or thier peripherals (such as the API). The main goal of the tests is to ensure the methods behave as expected. There is also an extensive number of error results that would allow the tester to identify what went wrong and where. Such as the router_test returning a string identifying why the error occured.
 
 ## II. Types of Testing in the Project
 ### A. Unit Testing
-- Describe the role and purpose of unit testing in the project.
-- Identify specific components or modules that are subjected to unit testing.
-- Mention how unit tests are executed and the tools or frameworks used.
+Unit testing is used for ensuring that all methods are behaving as expected. They use the genLongPaths() method to create a non-randomized list of test cases. The path and router tests both use unit testing to ensure they work as intended. For example, the TestPathCleanMallocs test ensures there is no memory leakage, as memory should not be allocated for the CleanPath function in the first place. The framework used for all testing done in GoHTTPRouter is the default testing framework found in GO's standard library. 
 
 ### B. Integration Testing
-- Explain the importance of integration testing in the context of the project.
-- Identify the interactions between different modules, services, or components that are tested.
-- Highlight the methods used for conducting integration tests and tools employed.
+The integration tests for this project are the route_test group of tests. This is because the router itself is utilizing other classes such as http.ResponseWriter. One such tool employed by this is a custom 'not found' handler in the TestRouterNotFound test. Another thing used heavily was mocks, which were used to prevent behavior from outside the intended testing material from influencing the test itself. One example of this was in TestRouterServeFiles, where a mockFileSystem and mockResponseWriter are used, instead of thier 'real' counterparts.
 
 ### C. UI (User Interface) Testing
-- Describe the significance of UI testing in the project, especially if it's a web application or software with a graphical user interface.
-- Explain which aspects of the user interface are tested (e.g., functionality, usability, responsiveness).
-- Mention the testing frameworks, tools, or automation scripts used for UI testing.
-
-### D. Other Types of Testing (if applicable)
-- If there are additional types of testing beyond unit, integration, and UI testing, outline and briefly explain them.
-- Provide insights into why these specific types of testing are relevant to the project's goals.
+No UI testing for HTTPRouter
 
 ## III. Reasons for Choosing These Testing Types
-- Discuss the rationale behind selecting these particular testing types for the project.
-- Consider the project's goals, technology stack, and unique requirements when explaining the choice of testing methods.
-- Highlight the benefits and advantages of using these testing types in this context.
+Due to the project working as the backend for a router, there was no need to preform UI testing. As always unit testing was included to ensure all methods performed as expected, such as the methods use to build a tree, or those used to interact with the standard libraries net/http package. The test only used the standard library testing packed, with the exception of the router test which also needed the net/http/httptest package to test iteractions with the net/http package. The technology stack was very small releative to other ptojects, onlt having 3 main files and 3 correseponding test files. The use of static testing in this scenario was more beneficial as the behavior would be predicable, and some tests could utilize a large set of test data such as the data created by genLongPaths(). Certain testing types were also just irrelevant, such as UI testing, due to a lack of presence in the project itself.
 
 ## 2. Test Data Generation
 ### A. Static Test Data
-- Explain if and how static test data is used in the project.
-- Provide examples of scenarios where static test data is employed.
+Probably the best example of static tests in this project is in path_test, where there is a function, genLongPaths(),dedicated to generating a large number of test cases for the other tests to use. Both the TestPathCleanLong and BenchmarkPathCleanLong use this static set of data for thier tests.
+
 ### B. Dynamic Test Data
-- Explain if and how dynamic test data is used in the project.
-- Provide examples of scenarios where dynamic test data is generated.
+There is no dynamic test data, everything uses a statically created series of tests.
 
 ## 3. Test Doubles
-- Identify and explain the use of test doubles (e.g., mocks, stubs, fakes) in the project.
-- Specify the specific components, functions, or cases where test doubles are applied.
-- Discuss the purpose of using these test doubles in the testing strategy.
+Both tree_test and router_test utilize test doubles to isolate behavior to that of only themselves. By using the test doubles the tests can simulate the behavior of the Handle or ResponseWriter (respecitvely) without woorying about how they are acutally implimented. This means that it is easier to write focused tests that verify the behavior of the methods rather than potentially having to work around an implimentaion for the Handle or ResponseWriter types. One example of this is the TestTreeAddAndGet test case, where the fakeHandler is used to replace an implimentaition that would normally use a realHandler.
 
 ## 4. Discussion on Testing Practices
 <!-- 
@@ -49,7 +37,5 @@ Visit the GitHub repository for the project you're interested in.
 Look for the "Issues" tab on the repository's page.
 Use the search bar within the Issues tab to search for terms related to testing, such as "testing strategy," "test cases," or "test automation."
 -->
-- Investigate any discussions related to testing practices within the project.
-- Give a link to the Github PR or issue
-- Summarize key points or insights from these discussions.
-- Offer your interpretation of how the project's testing practices align with industry standards or best practices.
+Most of the discussions I can find regarding testing are users who have discovered an error and have either developed or want a solution to be developed. I think the follwing issue found here:  https://github.com/julienschmidt/httprouter/issues/322 is a good example of this. User bahlo noticed an error and found a way to consistently create the error, meaning it was reproducable. One of the best things you can do is devise a way to reproduce the error, because you can then use that reproduction method as a test case to ensure the correction for the error works properly. The related commit can be found here : https://github.com/julienschmidt/httprouter/commit/34250257ea144905c752bfaae80d6885f190daf6, and includes both a correction to the code and the corresponding test case to ensure it works properly for others. I think the process of making an error reprocucable is one of the key strategies used in the industry as its allows people to identify where and how the error has occured by tracing the path the reproduced actions take. Another thing I believe to be industry standard is developing a new test for each new method or behavior. The Pull request here : https://github.com/julienschmidt/httprouter/pull/375/files, both adds a new behavior (UseEscapedPath), and when it does so already has a test designed for its implimentation. Creating the test with the method or behavior to ensure that the resulting behavior or method meets the specifications of the origional intent.
+

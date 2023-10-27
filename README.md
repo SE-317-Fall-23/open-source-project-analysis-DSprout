@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/N7InZDtx)
 Reading open source code is one of the best ways to improve coding skills. Open source projects have to be approachable for a wider audience compared to a software project in a company. Open source projects are reviwed by and developed by more people than closed source project. For these reasons the quality of the code is higher in open source projects. 
 
 In this assignment, you will evaluate the testing approach used in an open-source project. Please select one of the following open-source projects listed below for analysis. If you wish to choose a different project, make sure to obtain prior approval from your instructor.
